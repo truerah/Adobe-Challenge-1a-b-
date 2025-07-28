@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting the Dots - PDF Outline Extractor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Connecting the Dots</h1>
+                <p class="tagline">Extract and explore PDF outline structures</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Upload View -->
+            <div id="upload-view" class="view active">
+                <div class="upload-section">
+                    <div class="upload-card card">
+                        <div class="card__body">
+                            <div class="upload-header">
+                                <svg class="upload-header-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10,9 9,9 8,9"/>
+                                </svg>
+                                <h2>Upload Your PDF Document</h2>
+                                <p class="subtitle">Select a PDF file to extract its outline structure with headings and page numbers</p>
+                            </div>
+                            
+                            <div id="drop-zone" class="drop-zone">
+                                <div class="drop-zone__content">
+                                    <svg class="drop-zone__icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    <h3>Drag & drop your PDF here</h3>
+                                    <p>or</p>
+                                    <button type="button" class="btn btn--primary browse-btn">
+                                        Browse Files
+                                    </button>
+                                    <input type="file" id="file-input" accept=".pdf,application/pdf" class="sr-only">
+                                    <small class="file-info">Supports PDF files up to 50MB</small>
+                                </div>
+                                <div class="drop-zone__active">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    <p>Release to upload your PDF</p>
+                                </div>
+                            </div>
+                            
+                            <div id="file-preview" class="file-preview hidden">
+                                <div class="file-preview__icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14,2 14,8 20,8"/>
+                                    </svg>
+                                </div>
+                                <div class="file-preview__info">
+                                    <p class="file-name" id="file-name">document.pdf</p>
+                                    <p class="file-size" id="file-size">2.4 MB</p>
+                                </div>
+                                <button type="button" id="remove-file" class="file-preview__remove">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div id="progress-container" class="progress-container hidden">
+                                <div class="progress-header">
+                                    <h3>Processing PDF...</h3>
+                                    <span id="progress-percentage">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="progress-fill" class="progress-fill"></div>
+                                </div>
+                                <p class="progress-text" id="progress-text">Analyzing document structure</p>
+                            </div>
+
+                            <div class="upload-actions">
+                                <button type="button" id="process-btn" class="btn btn--primary btn--full-width hidden">
+                                    Extract Outline
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Demo Mode -->
+                    <div class="demo-section">
+                        <p class="demo-text">Don't have a PDF handy? <button type="button" id="demo-btn" class="demo-link">Try with sample data</button></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outline View -->
+            <div id="outline-view" class="view">
+                <div class="outline-header">
+                    <div class="outline-header-actions">
+                        <button id="back-btn" class="btn btn--outline">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5"/>
+                                <path d="M12 19l-7-7 7-7"/>
+                            </svg>
+                            Back to Upload
+                        </button>
+                        <div class="outline-header-actions-right">
+                            <button id="download-json-btn" class="btn btn--secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Download JSON
+                            </button>
+                        </div>
+                    </div>
+                    <div class="document-info">
+                        <h1 id="document-title">Document Outline</h1>
+                        <p id="document-subtitle">Interactive PDF structure visualization</p>
+                    </div>
+                </div>
+                
+                <div class="outline-content">
+                    <div class="outline-panel">
+                        <div class="panel-header">
+                            <h2>Document Structure</h2>
+                            <div class="panel-controls">
+                                <button type="button" id="expand-all" class="btn btn--sm btn--outline">Expand All</button>
+                                <button type="button" id="collapse-all" class="btn btn--sm btn--outline">Collapse All</button>
+                            </div>
+                        </div>
+                        <div class="outline-tree-container">
+                            <div id="outline-tree" class="outline-tree">
+                                <!-- Outline will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-panel">
+                        <div class="panel-header">
+                            <h2>Page Information</h2>
+                            <div id="page-counter" class="page-counter">Page - of -</div>
+                        </div>
+                        <div id="preview-content" class="preview-content">
+                            <div class="preview-placeholder">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                </svg>
+                                <h3>Select an outline item</h3>
+                                <p>Click on any heading in the outline to view its page information</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Connecting the Dots. Built for exploring PDF document structures.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
